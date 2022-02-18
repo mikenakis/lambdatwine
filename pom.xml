@@ -1,0 +1,132 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>mikenakis</groupId>
+	<artifactId>lambdatwine</artifactId>
+	<version>1.0-SNAPSHOT</version>
+
+	<licenses>
+		<license>
+			<name>No Permission License - All Rights Reserved</name>
+			<url>https://choosealicense.com/no-permission/</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Mike Nakis</name>
+			<email>pom.xml@michael.gr</email>
+			<organization>michael.gr</organization>
+			<organizationUrl>http://michael.gr</organizationUrl>
+		</developer>
+	</developers>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>16</maven.compiler.source>
+		<maven.compiler.target>16</maven.compiler.target>
+	</properties>
+
+	<build>
+		<directory>OUT</directory>
+		<sourceDirectory>main</sourceDirectory>
+		<testSourceDirectory>test</testSourceDirectory>
+		<resources>
+			<resource>
+				<directory>resources</directory>
+				<includes>
+					<include>*</include>
+				</includes>
+			</resource>
+		</resources>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version>
+				<configuration>
+					<source>16</source>
+					<target>16</target>
+
+					<compilerArgs>
+
+						<!-- The "-parameters" option "Generates metadata for reflection on method parameters." That's good, we want this. -->
+						<arg>-parameters</arg>
+
+						<!-- The "-Xlint" option enables all recommended warnings. We will then suppress some that we have no use for. -->
+						<arg>-Xlint</arg>
+
+						<!-- The "try" sub-option of the "Xlint" option is mind-bogglingly stupid.
+							It lives in a simplistic world in which resources are always created, used, and disposed
+							within a single function, so it aims to warn you that you forgot to dispose a resource
+							within the function that created it.
+							The following possibilities never occurred to the mastermind who invented this option:
+							- You might invoke a function which creates a resource and returns it, to be used and of
+							course disposed by the caller.
+							- You might create a resource and store it as a member variable of an object, which will
+							of course dispose the resource when it gets disposed.
+							So, the only reasonable thing to do with this warning is to always keep it disabled. -->
+						<arg>-Xlint:-try</arg>
+
+						<!-- The "serial" sub-option of the "Xlint" option "Warns about missing serialVersionUID
+							definitions on serializable classes". In other words, every single time you extend some
+							predefined class, you will be hit with an annoying warning just because the class you are
+							extending happens to be serializable, a feature which you usually have no use for, don't
+							care about, and don't want to be bothered about. -->
+						<arg>-Xlint:-serial</arg>
+
+						<!-- The "cast" sub-option of the "Xlint" option "Warns about the use of unnecessary casts." -->
+						<!-- <arg>-Xlint:-cast</arg>-->
+
+						<!-- If there are any warnings, we want compilation to fail. We don't want any half-measures. -->
+						<arg>-Werror</arg>
+
+						<!-- When the packaging is 'jar', IntellijIdea creates an "annotations" directory in our source
+							tree each time we build. ("target/generated-sources/annotations".)
+							IntellijIdea insists on doing this, despite the fact that:
+							- We have specified that we do not want any annotation processing to take place.
+							- We have specified our output folder to be in some place well outside our source tree,
+							precisely because we do not want our source code tree being littered with all kinds of
+							annoying directories that have absolutely no reason being in our source code tree.
+							The only way I have found to prevent this is by explicitly disabling annotation processing
+							with -proc:none -->
+						<arg>-proc:none</arg>
+
+					</compilerArgs>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.22.0</version>
+				<configuration>
+					<includes>
+						<!-- PEARL: the maven-surefire-plugin:
+							1. unnecessarily complicates things with a useless concept of inclusions and exclusions
+							2. sabotages the developer with default inclusions that pretty much require test class names to contain the word "Test".
+							(That's what you always achieve when you unnecessarily complicate things: you sabotage people.)
+							We correct this problem here by annihilating the plugin's concept of inclusions. -->
+						<include>**/*.java</include>
+					</includes>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
+</project>

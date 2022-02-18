@@ -1,0 +1,5 @@
+.idea
+**/*.iml
+**/OUT/
+.testana.cache.json
+.testana.persistence.json
