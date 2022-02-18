@@ -59,14 +59,6 @@ public final class Kit
 		return stackWalker.walk( s -> s.skip( numberOfFramesToSkip + 1 ).limit( 1 ).reduce( null, ( a, b ) -> b ) ); //TODO: simplify
 	}
 
-	public static SourceLocation getSourceLocation( int numberOfFramesToSkip )
-	{
-		StackWalker.StackFrame stackFrame = getStackFrame( numberOfFramesToSkip + 1 );
-		SourceLocation sourceLocation = SourceLocation.fromStackFrame( stackFrame );
-		assert sourceLocation.stringRepresentation().equals( stackFrame.toString() );
-		return sourceLocation;
-	}
-
 	public static String stringFromThrowable( Throwable throwable )
 	{
 		StringWriter stringWriter = new StringWriter();

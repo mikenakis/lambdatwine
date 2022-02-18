@@ -1,6 +1,6 @@
 # mikenakis/lambdatwine
 
-A framework for converting back and forth between any single-method-interface (henceforth also called 'lambda' for brevity) and the _Normal Form of Lambdas_, which is a single-method interface of the form `Object anylambda( Object[] arguments )`.
+A facility for converting back and forth between any single-method-interface (henceforth also called 'lambda' for brevity) and the _Normal Form of Lambdas_, which is a single-method interface of the form `Object anylambda( Object[] arguments )`.
 
 ## Description
                                                                                                                    
@@ -33,7 +33,49 @@ The untwiner of `T` performs the opposite and complementary operation of the ent
   - Invokes `exitPoint`, passing it the unpacked parameters.
   - Returns, possibly after boxing, whatever was returned by the method, or `null` if the method was of `void` return type.
 
-Writing entwiners and untwiners by hand is a tedious and error-prone task; *mikenakis/lambdatwine* is a framework that uses bytecode generation to automatically create _Entwiners_ and _Untwiners_ for any single-method interface.
+Writing entwiners and untwiners by hand is a tedious and error-prone task; *mikenakis/lambdatwine* is a facility that automatically creates _Entwiners_ and _Untwiners_ for any single-method interface.
+
+## Implementations
+
+3 implementations of the `LambdatwineFactory` interface are provided:
+
+1. Reflecting
+   - Uses reflection to accomplish their job.
+2. Methodhandle
+   - Uses JVM method handles to accomplish the job.
+3. Caching
+   - This is a decorator of the `LambdatwineFactory` interface that caches the `Lambdatwine` of each single-method interface that it sees, so as to avoid ever having to recreate the `Lambdatwine` for that interface again.
+
+## Benchmark
+
+A benchmark is included in the project, in the `test/mikenakis/lambdatwine/benchmark/LambdatwineBenchmark` class, which is runnable.
+
+This benchmark compares the performance of:
+1. Direct method invocation
+2. The reflecting implementation of lambdatwine
+3. The methodhandle-based implementation of lambdatwine
+
+On my machine it produces the following output;
+
+```
+Direct                    : 100000 iterations   0.1506s
+Reflecting Lambdatwine    : 100000 iterations   1.6382s
+MethodHandle Lambdatwine  : 100000 iterations   1.3696s
+
+Direct                    : 100000 iterations   0.1425s
+Reflecting Lambdatwine    : 100000 iterations   1.6260s
+MethodHandle Lambdatwine  : 100000 iterations   1.3619s
+
+Direct                    : 100000 iterations   0.1401s
+Reflecting Lambdatwine    : 100000 iterations   1.5716s
+MethodHandle Lambdatwine  : 100000 iterations   1.3654s
+```
+
+(3 runs are performed to showcase the repeatability of the measurements.)
+
+Note that:
+- The methodhandle implementation is just slightly faster than the reflecting implementation
+- Of course, both implementations are about one order of mangitude slower than direct invocation.
 
 ## State of the project
                        
