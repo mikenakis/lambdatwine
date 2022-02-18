@@ -33,7 +33,20 @@ The untwiner of `T` performs the opposite and complementary operation of the ent
   - Invokes `exitPoint`, passing it the unpacked parameters.
   - Returns, possibly after boxing, whatever was returned by the method, or `null` if the method was of `void` return type.
 
-Writing entwiners and untwiners by hand is a tedious and error-prone task; *mikenakis/lambdatwine* is a facility that automatically creates _Entwiners_ and _Untwiners_ for any single-method interface.
+Writing entwiners and untwiners by hand is a tedious and error-prone task; ***mikenakis/lambdatwine*** is a facility that automates the creation of _Entwiners_ and _Untwiners_ for any single-method interface.
+
+## How it works
+
+- The entry-point is the `LambdatwineFactory` interface.
+
+- You give `LambdatwineFactory` the class of a single-method interface, and it returns a `Lambdatwine` for that single-method interface.
+
+- Once you have a `Lambdatwine` for an interface, you can call it to create entwiners and untwiners for that interface.
+
+- To create an entwiner of `T`, you supply an instance of `Anylambda` and you receive an instane of `T`. From that moment on, when you invoke that `T`, it will result in your supplied `Anylambda` being invoked.
+
+- To create an untwiner of `T`, you supply an instance of `T` and you receive an instance of `Anylambda`. From that moment on, when you invoke that `Anylambda`, it will result in your supplied `T` being invoked.
+
 
 ## Implementations
 
@@ -55,7 +68,9 @@ This benchmark compares the performance of:
 2. The reflecting implementation of lambdatwine
 3. The methodhandle-based implementation of lambdatwine
 
-On my machine it produces the following output;
+On my machine it produces the following output:
+
+(3 runs are performed to showcase the repeatability of the measurements)
 
 ```
 Direct                    : 100000 iterations   0.1506s
@@ -71,21 +86,24 @@ Reflecting Lambdatwine    : 100000 iterations   1.5716s
 MethodHandle Lambdatwine  : 100000 iterations   1.3654s
 ```
 
-(3 runs are performed to showcase the repeatability of the measurements.)
-
 Note that:
-- The methodhandle implementation is just slightly faster than the reflecting implementation
+- The methodhandle implementation is just slightly faster than the reflecting implementation.
 - Of course, both implementations are about one order of mangitude slower than direct invocation.
 
 ## State of the project
                        
-This project works, but it suffers from one notable drawback:
+This project works, but it is of very limited usefulness due to the following reasons:
+1. When an entwiner or untwiner invokes client code, and the client code throws, the exception will be caught and wrapped in an `InvocationTargetException`, thus preventing the debugger from stopping at the original `throw` statement.  This extremely undesirable and utterly retarded behavior is courtesy of the JVM, it is not the fault of **mikenakis/lambdatwine**.
+2. It is always possible to achieve the same functionality (and without the JVM messing with your exceptions) using general purpose generic functions as follows:
+   - `Function0<R>`
+   - `Function1<R,P0>`
+   - `Function2<R,P0,P1>`
+   - `Function3<R,P0,P1,P2>`
 
-When an entwiner or untwiner invokes client code, and the client code throws, the exception will be caught and wrapped in an 'InvocationTargetException', thus preventing the debugger from stopping at the original `throw` statement.  This extremely undesirable and utterly retarded behavior is not the fault of mikenakis/lambdatwine, it exists courtesy of the "MethodHandle" facility which is part of the JVM.
-
-This project is of very limited usefulness since there exists mikenakis/intertwine, which:
-- Works with any interface, not just single-method interfaces
-- Does not mess with exceptions.
+     ...etc
+2. **mikenakis/lambdatwine** has been supreceded by ***mikenakis/intertwine***, which:
+    - Works with any interface, not just single-method interfaces.
+    - Does not mess with your exceptions.
 
 ## License
 
