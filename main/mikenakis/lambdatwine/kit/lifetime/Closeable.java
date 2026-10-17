@@ -2,7 +2,7 @@ package mikenakis.lambdatwine.kit.lifetime;
 
 /**
  * An object which is aware of its own lifetime.
- * See https://blog.michael.gr/2021/01/object-lifetime-awareness.html
+ * See https://blog.michael.gr/post/2020-12-27-object-lifetime-awareness/
  * In other words, this is an {@link AutoCloseable} which does not throw checked exceptions, and is capable of asserting its own 'alive' state.
  *
  * Normally this should be called 'LifetimeAware', but I have (at least for the time being) opted to call it "Closeable" since Java already has
